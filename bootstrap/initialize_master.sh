@@ -42,19 +42,11 @@ EOF
 systemctl restart docker
 
 
-export CONTROLLER=10.145.208.11
-
-export OS_USER_DOMAIN_NAME=Default
-#export OS_PROJECT_DOMAIN_NAME=Default
-export OS_PROJECT_NAME=kevin
 export OS_USERNAME=kevin
 export OS_PASSWORD=kevin
 export OS_TENANT_NAME=kevin
-export OS_AUTH_URL=http://$CONTROLLER:35357/v3
+export OS_AUTH_URL=http://10.145.208.11:35357/v3
 export OS_IDENTITY_API_VERSION=3
-export OS_IMAGE_API_VERSION=2
-export OS_VOLUME_API_VERSION=2
-export OS_REGION_NAME=RegionOne
 
 if [[ "${swift_bucket}_xxx" != "_xxx" ]]; then
   echo "download kubeadm kubelet binaries from swift bucket ${swift_bucket}"
