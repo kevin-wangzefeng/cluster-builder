@@ -10,7 +10,7 @@ variable kube_repo_prefix { default="gcr.io/google_containers" }
 variable kubernetes_version {}
 variable swift_bucket { default="" }
 
-variable create_new_internal_network {}
+variable create_new_internal_network { default = false }
 variable reuse_internal_network_name {}
 variable reuse_secgroup_name {}
 
@@ -36,15 +36,14 @@ module "keypair" {
   name_prefix = "${var.cluster_prefix}"
 }
 
-#if "${var.create_new_internal_network}" {
-#  # Network 
-#  module "network" {
-#    source = "./network"
-#    external_net_uuid = "${var.external_network_uuid}"
-#    name_prefix = "${var.cluster_prefix}"
-#    dns_nameservers = "${var.dns_nameservers}"
-#  }
-#}
+# Network
+module "network" {
+  source = "./network"
+  count = "${var.create_new_internal_network ? 1 : 0 }"
+  external_net_uuid = "${var.external_network_uuid}"
+  name_prefix = "${var.cluster_prefix}"
+  dns_nameservers = "${var.dns_nameservers}"
+}
 
 module "master" {
   # Core settings
@@ -57,13 +56,12 @@ module "master" {
   # SSH settings
   keypair_name = "${module.keypair.keypair_name}"
   # Network settings
- # if "${var.create_new_internal_network}" {
- #   network_name = "${module.network.network_name}"
- #   secgroup_name = "${module.network.secgroup_name}"
- # } else {
-    network_name = "${var.reuse_internal_network_name}"
-    secgroup_name = "${var.reuse_secgroup_name}"
- # }
+  network_name = "${var.create_new_internal_network ? module.network.network_name : var.reuse_internal_network_name}"
+  secgroup_name = "${var.create_new_internal_network ? module.network.secgroup_name : var.reuse_secgroup_name}"
+
+ # network_name = "${var.reuse_internal_network_name}"
+ # secgroup_name = "${var.reuse_secgroup_name}"
+
   assign_floating_ip = "false"
   floating_ip_pool = "${var.floating_ip_pool}"
   # Disk settings
@@ -90,13 +88,12 @@ module "node" {
   # SSH settings
   keypair_name = "${module.keypair.keypair_name}"
   # Network settings
- # if "${var.create_new_internal_network}" {
- #   network_name = "${module.network.network_name}"
- #   secgroup_name = "${module.network.secgroup_name}"
- # } else {
-    network_name = "${var.reuse_internal_network_name}"
-    secgroup_name = "${var.reuse_secgroup_name}"
- # }
+  network_name = "${var.create_new_internal_network ? module.network.network_name : var.reuse_internal_network_name}"
+  secgroup_name = "${var.create_new_internal_network ? module.network.secgroup_name : var.reuse_secgroup_name}"
+
+ # network_name = "${var.reuse_internal_network_name}"
+ # secgroup_name = "${var.reuse_secgroup_name}"
+
   assign_floating_ip = "false"
   floating_ip_pool = ""
   # Disk settings

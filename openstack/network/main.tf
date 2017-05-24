@@ -2,13 +2,16 @@ variable name_prefix {}
 variable subnet_cidr { default = "10.0.0.0/16"}
 variable external_net_uuid {}
 variable dns_nameservers {}
+variable count { default = 0}
 
 resource "openstack_networking_network_v2" "main" {
+  count = "${var.count}"
   name = "${var.name_prefix}-network"
   admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "main" {
+  count = "${var.count}"
   name = "${var.name_prefix}-subnet"
   network_id = "${openstack_networking_network_v2.main.id}"
   cidr = "${var.subnet_cidr}"
@@ -18,16 +21,19 @@ resource "openstack_networking_subnet_v2" "main" {
 }
 
 resource "openstack_networking_router_v2" "main" {
+  count = "${var.count}"
   name = "${var.name_prefix}-router"
   external_gateway = "${var.external_net_uuid}"
 }
 
 resource "openstack_networking_router_interface_v2" "main" {
+  count = "${var.count}"
   router_id = "${openstack_networking_router_v2.main.id}"
   subnet_id = "${openstack_networking_subnet_v2.main.id}"
 }
 
 resource "openstack_compute_secgroup_v2" "main" {
+  count = "${var.count}"
   name = "${var.name_prefix}-secgroup"
   description = "The automatically created secgroup for ${var.name_prefix}"
   rule {
@@ -63,9 +69,9 @@ resource "openstack_compute_secgroup_v2" "main" {
 }
 
 output "network_name" {
-  value = "${openstack_networking_network_v2.main.name}"
+  value = "${var.name_prefix}-network"
 }
 
 output "secgroup_name" {
-  value = "${openstack_compute_secgroup_v2.main.name}"
+  value = "${var.name_prefix}-secgroup"
 }
