@@ -24,11 +24,6 @@ variable node_count {}
 variable node_flavor {}
 variable node_flavor_id { default = ""}
 
-# Edges settings
-variable edge_count {}
-variable edge_flavor {}
-variable edge_flavor_id { default = ""}
-
 # Upload SSH key to OpenStack
 module "keypair" {
   source = "./keypair"

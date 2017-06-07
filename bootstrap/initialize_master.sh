@@ -94,7 +94,7 @@ kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Docume
 # export ARCH=amd64
 # curl -sSL "https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel.yml?raw=true" | sed "s/amd64/$ARCH/g" | kubectl create -f -
 kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-# kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
 
 echo "copy config file for kubectl to home"
 USER=$(whoami)
